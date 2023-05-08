@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ClocksService } from './services/clocks.service';
+import { ClockService } from './services/clocks.service';
 import { Clock } from './models/clock.entity';
 import { ClockController } from './controllers/clocks.controller';
 import { ClockRepository } from './repositories/clock.repository';
@@ -13,6 +13,6 @@ import ormconfig from './typeorm.config';
     TypeOrmModule.forFeature([Clock, ClockRepository]),
   ],
   controllers: [ClockController],
-  providers: [ClocksService, AppService],
+  providers: [ClockService, AppService],
 })
 export class AppModule {}

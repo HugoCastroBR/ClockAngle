@@ -11,11 +11,12 @@ export class Clock {
   @ApiProperty()
   hour: number;
 
-  @Column()
+  @Column({
+    default: 0,
+  })
   @ApiProperty({
     required: false,
     default: 0,
-    description: 'Minute hand',
   })
   minute?: number;
 

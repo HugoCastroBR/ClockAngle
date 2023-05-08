@@ -1,38 +1,24 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiParam } from '@nestjs/swagger';
-
-@Controller('/rest/clock')
+import { ClockService } from '../services/clocks.service';
+@Controller('rest/clock')
 export class ClockController {
-  @Get(':hour/:minute')
+  constructor(private readonly clockService: ClockService) {}
+
+  @Get(':hour/:minute?')
   @ApiParam({ name: 'hour', type: 'number' })
-  @ApiParam({ name: 'minute', type: 'number' })
-  getAngle(
-    @Param('hour') hour: number,
-    @Param('minute') minute?: number,
-  ): { angle: number } {
-    const hourAngle = (hour % 12) * 30 + minute / 2;
-    const minuteAngle = minute * 6;
-    const angle = Math.abs(hourAngle - minuteAngle);
+  @ApiParam({ name: 'minute', type: 'number', required: false })
+  getClockAngle(@Param('hour') hour: number, @Param('minute') minute: string) {
+    let parsedMinute = parseInt(minute);
+    if (isNaN(parsedMinute)) {
+      parsedMinute = 0;
+    }
+    const hourAngle = (hour % 12) * 30 + parsedMinute / 2;
+    const minuteAngle = parsedMinute * 6;
+    const angle = Math.round(Math.abs(hourAngle - minuteAngle));
+    const date = new Date();
+
+    this.clockService.saveClock(hour, parsedMinute, angle, date);
     return { angle: Math.min(angle, 360 - angle) };
   }
-
-  // @Get()
-  // async findAll(): Promise<Clock[]> {
-  //   return this.clocksService.findAll();
-  // }
-
-  // @Post()
-  // async create(@Body() clock: Clock): Promise<Clock> {
-  //   return this.clocksService.create(clock);
-  // }
-
-  // @Put(':id')
-  // async update(@Param('id') id: string, @Body() clock: Clock): Promise<Clock> {
-  //   return this.clocksService.update(+id, clock);
-  // }
-
-  // @Delete(':id')
-  // async delete(@Param('id') id: string): Promise<void> {
-  //   this.clocksService.delete(+id);
-  // }
 }
